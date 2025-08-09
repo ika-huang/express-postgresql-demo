@@ -2,6 +2,7 @@ require('module-alias/register')
 const express = require('express');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 
 dotenv.config();
 const app = express();
@@ -12,7 +13,8 @@ app.get('/', (req, res) => {
   res.send('Hello, PostgreSQL + Express!');
 });
 
-app.use('/users', userRoutes)
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

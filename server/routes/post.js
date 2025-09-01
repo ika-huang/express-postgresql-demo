@@ -5,7 +5,7 @@ const { authenticateToken, authorizeRoles } = require('@controllers/authenticate
 
 router.get('/', controllers.listPost);
 
-router.get('/users/:userId', authenticateToken, authorizeRoles(['admin', 'user']), controllers.listPostByUser);
+// router.get('/users/:userId', authenticateToken, authorizeRoles(['admin', 'user']), controllers.listPostByUser);
 
 router.get('/:postId', authenticateToken, authorizeRoles(['admin', 'user']), controllers.getPost);
 

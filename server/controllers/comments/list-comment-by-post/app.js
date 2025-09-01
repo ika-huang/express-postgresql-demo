@@ -2,8 +2,8 @@ const pool = require('@/db');
 
 module.exports = async(req, res) => {
   try {
-    let { page = 1, limit = 10 } = req.query;
     const { postId } = req.params;
+    let { page = 1, limit = 10 } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
     const offset = (page - 1) * limit;

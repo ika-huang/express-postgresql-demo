@@ -1,8 +1,13 @@
 const pool = require('@/db');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 module.exports = async(req, res) => {
   try {
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      return res.status(409).json({ errors: validationError.array() });
+    }
     const { email, password } = req.body;
     const JWT_SECRET = process.env.JWT_SECRET;
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])

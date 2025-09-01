@@ -5,7 +5,7 @@ module.exports = async(req, res) => {
     const { postId } = req.params;
     const { userId } = req.user;
     const postResult = await pool.query(
-      `SELECT * FROM ${process.env.POST_DATABASE_NAME} WHERE id = $1`,
+      `SELECT * FROM ${process.env.POST_TABLE_NAME} WHERE id = $1`,
       [postId]
     )
     if (postResult.rows.length === 0) {
@@ -29,7 +29,7 @@ module.exports = async(req, res) => {
       return res.status(400).json({ error: 'No fields to update' });
     }
     fields.push(`"updatedAt" = NOW()`);
-    const query = `UPDATE ${process.env.POST_DATABASE_NAME} SET ${fields.join(', ')} WHERE id = $${index} RETURNING *`;
+    const query = `UPDATE ${process.env.POST_TABLE_NAME} SET ${fields.join(', ')} WHERE id = $${index} RETURNING *`;
     values.push(postId);
     const result = await pool.query(query, values);
     return res.json(result.rows);

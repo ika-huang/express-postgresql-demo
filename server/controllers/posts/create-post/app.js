@@ -5,7 +5,7 @@ module.exports = async(req, res) => {
     const { userId } = req.user;
     const { title, content } = req.body;
     const result = await pool.query(
-      `INSERT INTO ${process.env.POST_DATABASE_NAME} ("userId", title, content, "createdAt", "updatedAt")
+      `INSERT INTO ${process.env.POST_TABLE_NAME} ("userId", title, content, "createdAt", "updatedAt")
       VALUES ($1, $2, $3, NOW(), NOW())
       RETURNING *`,
       [userId, title, content]

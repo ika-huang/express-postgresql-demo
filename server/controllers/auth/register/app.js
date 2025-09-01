@@ -9,7 +9,7 @@ module.exports = async(req, res) => {
       return res.status(409).json({ message: 'Email already exists' });
     }
     const result = await pool.query(
-      `INSERT INTO ${process.env.USER_DATABASE_NAME}
+      `INSERT INTO ${process.env.USER_TABLE_NAME}
       (name, email, age, role, password, "createdAt", "updatedAt")
       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING id, name, email, age, role, "createdAt", "updatedAt"`,

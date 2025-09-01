@@ -5,7 +5,7 @@ module.exports = async(req, res) => {
     const { postId } = req.params;
     const { userId } = req.user;
     const result = await pool.query(
-      `SELECT * FROM ${process.env.POST_DATABASE_NAME} WHERE id = $1;`,
+      `SELECT * FROM ${process.env.POST_TABLE_NAME} WHERE id = $1;`,
       [postId]
     )
     if (result.rows.length === 0) {

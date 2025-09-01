@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/post');
+const commentRoutes = require('./routes/comment');
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

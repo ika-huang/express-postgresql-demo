@@ -1,7 +1,12 @@
 const pool = require('@/db');
+const { validationResult } = require('express-validator');
 
 module.exports = async(req, res) => {
   try {
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      return res.status(409).json({ errors: validationError.array() });
+    }
     const { userId } = req.user;
     const { title, content } = req.body;
     const result = await pool.query(

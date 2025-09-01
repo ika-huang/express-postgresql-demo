@@ -1,7 +1,12 @@
 const pool = require('@/db');
+const { validationResult } = require('express-validator');
 
 module.exports = async(req, res) => {
   try {
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      return res.status(409).json({ errors: validationError.array() });
+    }
     const { postId } = req.params;
     let { page = 1, limit = 10 } = req.query;
     page = parseInt(page);

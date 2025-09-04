@@ -15,7 +15,7 @@ module.exports = async(req, res) => {
       RETURNING *`,
       [userId, title, content]
     )
-    return res.json(result.rows);
+    return res.json(result.rows[0]);
   } catch (err) {
     console.log(err)
     return res.status(500).json(err)

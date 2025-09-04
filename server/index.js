@@ -5,10 +5,14 @@ const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/post');
 const commentRoutes = require('./routes/comment');
+const cors = require('cors')
 
 dotenv.config();
 const app = express();
 
+app.use(cors({
+  origin: ['http://localhost:5173']
+}));
 app.use(express.json()); // 支援 JSON body
 
 app.get('/', (req, res) => {

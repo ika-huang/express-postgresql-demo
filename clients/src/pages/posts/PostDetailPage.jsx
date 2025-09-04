@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-// import axios from 'axios'
 import { usePostsStore } from '../../store/posts'
+import { useAuthStore } from '../../store/auth'
+import CommentForm from '../../components/CommentForm'
 
 export default function PostDetailPage() {
   const { id } = useParams()
   const { fetchPostById, deletePost } = usePostsStore()
+  const { user } = useAuthStore()
   const [post, setPost] = useState(null)
   const navigate = useNavigate()
 
@@ -13,16 +15,15 @@ export default function PostDetailPage() {
     const getPost = async () => {
       try {
         const data = await fetchPostById(id)
-        console.log(`data`)
         setPost(data)
       } catch (err) {
         console.error(err)
       }
     }
     getPost()
-  }, [fetchPostById, id])
+  }, [])
 
-  const deletee = async () => {
+  const removePost = async () => {
     try {
       await deletePost(id)
       navigate('/')
@@ -30,6 +31,13 @@ export default function PostDetailPage() {
       console.log(error)
     }
   }
+
+  const handleCommentAdded = (comment) => {
+    setPost((prevPost) => ({
+      ...prevPost,
+      comments: [...prevPost.comments, comment],
+    }));
+  };
 
   if (!post) return <p>Loading...</p>
   
@@ -47,7 +55,9 @@ export default function PostDetailPage() {
           </li>
         ))}
       </ul>
-      <button onClick={deletee}>刪除</button>
+      { user.role === 'admin' || post.userId === user.id ? <button onClick={removePost}>刪除</button>: <></>}
+      { post.userId === user.id ? <button onClick={ () => navigate(`/posts/${id}/edit`)}>更新</button> : <></>}
+      <CommentForm postId={id} onCommentAdded={handleCommentAdded} />
     </div>
   )
 }

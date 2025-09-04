@@ -1,36 +1,29 @@
-import { createContext, useContext, useState } from 'react'
+import { create } from 'zustand'
+import { persist } from "zustand/middleware";
 import axios from 'axios'
 
-const AuthContext = createContext()
+const API_URL = 'http://localhost:3000/auth'
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem('token') || '')
+export const useAuthStore = create(persist((set) => ({
+  user: localStorage.getItem('user') || null,
+  token: localStorage.getItem('token') || '',
+  roles: ['user', 'admin'],
 
-  const login = async ({ email, password }) => {
-    const res = await axios.post('http://localhost:3000/auth/login', { email, password })
-    setToken(res.data.accessToken)
+  login: async ({ email, password }) => {
+    const res = await axios.post(`${API_URL}/login`, { email, password })
+    set({ user: res.data, token: res.data.accessToken })
     localStorage.setItem('accessToken', res.data.accessToken)
-    setUser(res.data)
-  }
+    localStorage.setItem('user', res.data)
+  },
 
-  const register = async (email, password, name) => {
-    const res = await axios.post('http://localhost:3000/auth/register', { email, password, name })
+  register: async ({ email, password, name, age }) => {
+    const res = await axios.post(`${API_URL}/register`, { email, password, name, age })
     return res.data
-  }
+  },
 
-  const logout = () => {
-    setUser(null)
-    setToken('')
+  logout: () => {
+    set({ user: null, token: null })
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
-
-  return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuthStore = () => useContext(AuthContext)
+})))

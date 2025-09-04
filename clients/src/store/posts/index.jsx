@@ -1,46 +1,49 @@
-import { createContext, useContext, useState } from 'react'
+import { create } from 'zustand'
 import axios from 'axios'
 
-const PostsContext = createContext()
+const API_URL = 'http://localhost:3000/posts'
 
-export function PostsProvider({ children }) {
-  const [posts, setPosts] = useState([])
+export const usePostsStore = create((set, get) => ({
+  posts: [],
+  currentPost: null,
+  accessToken: localStorage.getItem('accessToken'),
 
-  const accessToken = localStorage.getItem('accessToken')
-  // actions
-  const fetchPosts = async ({ page = 1, limit = 10 }) => {
-    const res = await axios.get(`http://localhost:3000/posts?page=${page}&limit=${limit}`)
-    // setPosts(res.data.data)
-    return res.data.data
-  }
+  setPosts: (posts) => {
+    set({ posts })
+  },
 
-  const fetchPostById = async (id) => {
-    const res = await axios.get(`http://localhost:3000/posts/${id}`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
+  fetchPosts: async ({ page = 1, limit = 10 }) => {
+    const res = await axios.get(`${API_URL}?page=${page}&limit=${limit}`)
+    const { data: posts } = res.data
+    return posts
+  },
+  
+  fetchPostById: async (id) => {
+    const res = await axios.get(`${API_URL}/${id}`, {
+      headers: { Authorization: `Bearer ${get().accessToken}` }
+    })
+    set({ currentPost: res.data })
+    return res.data
+  },
+
+    createPost: async ({ title, content }) => {
+    const res = await axios.post(`${API_URL}`, { title, content }, {
+      headers: { Authorization: `Bearer ${get().accessToken}` }
+    })
+    return res.data
+  },
+
+    updatePost: async ({ id, body }) => {
+    const res = await axios.put(`${API_URL}/${id}`, body, {
+      headers: { Authorization: `Bearer ${get().accessToken}` }
+    })
+    return res.data
+  },
+  
+    deletePost: async (id) => {
+    const res = await axios.delete(`${API_URL}/${id}`, {
+      headers: { Authorization: `Bearer ${get().accessToken}` }
     })
     return res.data
   }
-
-  const createPost = async ({ title, content }) => {
-    const res = await axios.post('http://localhost:3000/posts', { title, content }, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    return res.data
-  }
-
-  const deletePost = async (id) => {
-    const res = await axios.delete(`http://localhost:3000/posts/${id}`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    return res.data
-  }
-
-  return (
-    <PostsContext.Provider value={{ posts, setPosts, fetchPosts, fetchPostById, createPost, deletePost }}>
-      {children}
-    </PostsContext.Provider>
-  )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const usePostsStore = () => useContext(PostsContext)
+}))

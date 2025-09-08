@@ -26,21 +26,21 @@ export const usePostsStore = create((set, get) => ({
     return res.data
   },
 
-    createPost: async ({ title, content }) => {
+  createPost: async ({ title, content }) => {
     const res = await axios.post(`${API_URL}`, { title, content }, {
       headers: { Authorization: `Bearer ${get().accessToken}` }
     })
     return res.data
   },
 
-    updatePost: async ({ id, body }) => {
+  updatePost: async ({ id, body }) => {
     const res = await axios.put(`${API_URL}/${id}`, body, {
       headers: { Authorization: `Bearer ${get().accessToken}` }
     })
     return res.data
   },
   
-    deletePost: async (id) => {
+  deletePost: async (id) => {
     const res = await axios.delete(`${API_URL}/${id}`, {
       headers: { Authorization: `Bearer ${get().accessToken}` }
     })
